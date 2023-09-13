@@ -1,4 +1,5 @@
 # Fullstack-Open-Exercises
+
 All my exercises for the course on https://fullstackopen.com/
 
 ```mermaid
@@ -27,6 +28,6 @@ sequenceDiagram
     activate server
     server-->>browser: [{ "content": "HTML is easy", "date": "2023-1-1" }, ... ]
     deactivate server
-```    
+```
 
     Note right of browser: The browser executes the callback function that renders the notes
