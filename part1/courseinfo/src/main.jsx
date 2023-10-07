@@ -8,5 +8,5 @@ let counter = 1
 //     <App />
 //   </React.StrictMode>,
 //oc
-// ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+// ReactDOM.createRoot(document.getElementById("root")).render( <App />);
 ReactDOM.createRoot(document.getElementById('root')).render(<App counter={counter} />)
