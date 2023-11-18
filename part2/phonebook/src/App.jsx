@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Filter = ({ filter }) => (
   <div>
@@ -40,6 +40,9 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
+
+  // const 
+  // const [note, setNotes] = useState([])
 
   const handleNames = e => {
     setNewName(e.target.value);

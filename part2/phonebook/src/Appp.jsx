@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import axios from 'axios';
 import Note from './components/Note';
 
-const App = props => {
+const Appp = props => {
   console.log(props);
-  const [notes, setNotes] = useState(props.notes);
+  const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState('');
   const [showAll, setShowAll] = useState(true);
 
@@ -25,13 +26,28 @@ const App = props => {
     console.log(noteObject);
     setNewNote('');
   };
-  console.log(showAll)
+
+  const toggleImportanceOf = id => {
+    const url = `http://localhost:3001/notes/${id}`;
+    const note = notes.find(n => n.id === id);
+    const changedNote = { ...notes, important: !note.important };
+
+    axios.put(url, changedNote).then(response => {
+      setNotes(notes.map(n => (n.id !== id ? n : response.data)));
+    });
+  };
+
+  console.log(showAll);
   return (
     <div>
       <h1>Notes</h1>
       <ul>
         {notesToShow.map(note => (
-          <Note key={note.id} note={note} />
+          <Note
+            key={note.id}
+            note={note}
+            toggleImportanceOf={() => toggleImportanceOf(note.id)}
+          />
         ))}
         <button
           onClick={() => {
@@ -48,4 +64,4 @@ const App = props => {
   );
 };
 
-export default App;
+export default Appp;
