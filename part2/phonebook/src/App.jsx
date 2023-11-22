@@ -1,45 +1,18 @@
 import React, { useState, useEffect } from 'react';
 
-const Filter = ({ filter }) => (
-  <div>
-    filter shown with <input type='search' onChange={filter} />
-  </div>
-);
+import contactsService from './services/contacts';
 
-const PersonForm = props => (
-  <form onSubmit={props.persons}>
-    <div>
-      name: <input onChange={props.names} value={props.newName} />
-    </div>
-    <div>
-      number: <input onChange={props.number} value={props.newNumber} />
-    </div>
-    <div>
-      <button type='submit'>add</button>
-    </div>
-  </form>
-);
-
-const Persons = (props) => (
-  <div>
-    {props.filteredPersons.map(({ name, number, id }) => (
-      <p key={id}>
-        {name} {number}
-      </p>
-    ))}
-  </div>
-);
+const { getContacts } = contactsService;
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 },
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
-  const [filter, setFilter] = useState('')
+  const [filter, setFilter] = useState('');
+
+  useEffect(() => {
+    getContacts().then(contacts => setPersons([...contacts]));
+  }, []);
 
   const handleNames = e => {
     setNewName(e.target.value);
@@ -87,9 +60,39 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
-      <Persons filteredPersons={filteredPersons}/>
+      <Persons filteredPersons={filteredPersons} />
     </div>
   );
 };
+
+const Filter = ({ filter }) => (
+  <div>
+    filter shown with <input type='search' onChange={filter} />
+  </div>
+);
+
+const PersonForm = props => (
+  <form onSubmit={props.persons}>
+    <div>
+      name: <input onChange={props.names} value={props.newName} />
+    </div>
+    <div>
+      number: <input onChange={props.number} value={props.newNumber} />
+    </div>
+    <div>
+      <button type='submit'>add</button>
+    </div>
+  </form>
+);
+
+const Persons = props => (
+  <div>
+    {props.filteredPersons.map(({ name, number, id }) => (
+      <p key={id}>
+        {name} {number}
+      </p>
+    ))}
+  </div>
+);
 
 export default App;

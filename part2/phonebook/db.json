@@ -1,39 +1,8 @@
 {
-  "notes": [
-    {
-      "id": 1,
-      "content": "HTML is easy",
-      "important": true
-    },
-    {
-      "id": 2,
-      "content": "Browser can execute only JavaScript",
-      "important": false
-    },
-    {
-      "id": 3,
-      "content": "GET and POST are the most important methods of HTTP protocol",
-      "important": false
-    },
-    {
-      "id": 4,
-      "important": false,
-      "content": "what am i doing here"
-    },
-    {
-      "id": 5,
-      "important": false,
-      "content": "POST is used to create new resources"
-    },
-    {
-      "id": 6,
-      "important": false,
-      "content": "1234"
-    },
-    {
-      "id": 7,
-      "important": true,
-      "content": "................................."
-    }
+  "contacts": [
+    { "name": "Arto Hellas", "number": "040-123456", "id": 1 },
+    { "name": "Ada Lovelace", "number": "39-44-5323523", "id": 2 },
+    { "name": "Dan Abramov", "number": "12-43-234345", "id": 3 },
+    { "name": "Mary Poppendieck", "number": "39-23-6423122", "id": 4 }
   ]
 }
