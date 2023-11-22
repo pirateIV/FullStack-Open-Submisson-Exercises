@@ -39,10 +39,7 @@ const App = () => {
   ]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
-  const [filter, setFilter] = useState('');
-
-  // const 
-  // const [note, setNotes] = useState([])
+  const [filter, setFilter] = useState('')
 
   const handleNames = e => {
     setNewName(e.target.value);
@@ -74,14 +71,13 @@ const App = () => {
   const filteredPersons = persons.filter(person => {
     return person.name.toLowerCase().includes(filter);
   });
-  // console.log(filteredPersons)
 
   return (
     <div>
       <h2>Phonebook</h2>
       <Filter filter={handleFilterChange} />
 
-      <h3>add a new</h3>
+      <h3>Add a new</h3>
       <PersonForm
         persons={handleAddPersons}
         names={handleNames}
@@ -90,7 +86,7 @@ const App = () => {
         newNaumber={newNumber}
       />
 
-      <h2>Numbers</h2>
+      <h3>Numbers</h3>
       <Persons filteredPersons={filteredPersons}/>
     </div>
   );
