@@ -41,13 +41,19 @@ const App = () => {
     setFilter(e.target.value.toLowerCase());
   };
 
-  const handleDeleteContact = id => {
-    deleteContact(id).then(() => {
-      setPersons([...persons])
-      // update contacts
-      getContacts().then(contacts => setPersons([...contacts]));
-    });
+  const handleDeleteContact = (id, name) => {
+    if (window.confirm(`Delete ${name} ?`)) {
+      deleteContact(id).then(() => {
+        setPersons([...persons]);
+        // update contacts
+        getContacts().then(contacts => setPersons([...contacts]));
+      });
+    }
   };
+
+  const handleUpdateContact = () => {
+    
+  }
 
   const filteredPersons = persons.filter(person => {
     return person.name.toLowerCase().includes(filter);
@@ -102,7 +108,7 @@ const Persons = props => {
       {props.filteredPersons.map(({ name, number, id }) => (
         <p key={id}>
           {name} {number}{' '}
-          <button onClick={() => props.deleteContact(id)}>delete</button>
+          <button onClick={() => props.deleteContact(id, name)}>delete</button>
         </p>
       ))}
     </div>
