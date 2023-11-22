@@ -3,7 +3,19 @@ import axios from 'axios';
 const baseUrl = 'http://localhost:3000/contacts';
 
 const getContacts = () => {
-  const request = axios.get(baseUrl)
+  // axios(url) - send a GET request default method
+  const request = axios(baseUrl)
   return request.then(({data}) => data)
 };
-export default { getContacts };
+
+const createContact = (contactObj) => {
+  const request = axios.post(baseUrl, contactObj)
+  return request.then(({data}) => data)
+}
+
+const deleteContact = (id) => {
+  const request = axios.delete(`${baseUrl}/${id}`)
+  return request.then(({data}) => data)
+}
+
+export default { getContacts, createContact, deleteContact };

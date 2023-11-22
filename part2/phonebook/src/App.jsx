@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import contactsService from './services/contacts';
 
-const { getContacts } = contactsService;
+const { getContacts, createContact, deleteContact } = contactsService;
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -31,7 +31,7 @@ const App = () => {
       number: newNumber,
     };
 
-    setPersons([...persons, person]);
+    createContact(person).then(contact => setPersons([...persons, contact]));
     alert(`${newName} is already added to phonebook`);
     setNewName('');
     setNewNumber('');
@@ -39,6 +39,14 @@ const App = () => {
 
   const handleFilterChange = e => {
     setFilter(e.target.value.toLowerCase());
+  };
+
+  const handleDeleteContact = id => {
+    deleteContact(id).then(() => {
+      setPersons([...persons])
+      // update contacts
+      getContacts().then(contacts => setPersons([...contacts]));
+    });
   };
 
   const filteredPersons = persons.filter(person => {
@@ -60,7 +68,10 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons
+        deleteContact={handleDeleteContact}
+        filteredPersons={filteredPersons}
+      />
     </div>
   );
 };
@@ -85,14 +96,17 @@ const PersonForm = props => (
   </form>
 );
 
-const Persons = props => (
-  <div>
-    {props.filteredPersons.map(({ name, number, id }) => (
-      <p key={id}>
-        {name} {number}
-      </p>
-    ))}
-  </div>
-);
+const Persons = props => {
+  return (
+    <div>
+      {props.filteredPersons.map(({ name, number, id }) => (
+        <p key={id}>
+          {name} {number}{' '}
+          <button onClick={() => props.deleteContact(id)}>delete</button>
+        </p>
+      ))}
+    </div>
+  );
+};
 
 export default App;
