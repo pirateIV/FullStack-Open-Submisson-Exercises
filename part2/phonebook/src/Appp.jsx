@@ -47,8 +47,6 @@ const Appp = props => {
     })
   };
 
-  // console.log('');
-  // console.log(showAll);
   return (
     <div>
       <h1>Notes</h1>

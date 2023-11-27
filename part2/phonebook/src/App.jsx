@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 import contactsService from './services/contacts';
 
-const { getContacts, createContact, deleteContact } = contactsService;
+const { getContacts, createContact, deleteContact, updatedContact } =
+  contactsService;
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -31,10 +32,19 @@ const App = () => {
       number: newNumber,
     };
 
-    createContact(person).then(contact => setPersons([...persons, contact]));
-    alert(`${newName} is already added to phonebook`);
-    setNewName('');
-    setNewNumber('');
+    const handleUpdatePerson = (id, updateContact) => {
+      console.log(id, updateContact)
+    };
+
+    const updateContact = persons.find(p => p.name === person.name);
+    if (updateContact !== undefined) {
+      handleUpdatePerson(person.id, { ...updateContact, ...person });
+    } else {
+      createContact(person).then(contact => setPersons([...persons, contact]));
+      alert(`${newName} is already added to phonebook`);
+      setNewName('');
+      setNewNumber('');
+    }
   };
 
   const handleFilterChange = e => {
@@ -44,16 +54,12 @@ const App = () => {
   const handleDeleteContact = (id, name) => {
     if (window.confirm(`Delete ${name} ?`)) {
       deleteContact(id).then(() => {
-        setPersons([...persons]);
-        // update contacts
+          setPersons([...persons]);
+          // update contacts
         getContacts().then(contacts => setPersons([...contacts]));
       });
     }
   };
-
-  const handleUpdateContact = () => {
-    
-  }
 
   const filteredPersons = persons.filter(person => {
     return person.name.toLowerCase().includes(filter);
@@ -70,7 +76,7 @@ const App = () => {
         names={handleNames}
         number={handleNumber}
         newName={newName}
-        newNaumber={newNumber}
+        newNumber={newNumber}
       />
 
       <h3>Numbers</h3>
