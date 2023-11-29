@@ -22,8 +22,7 @@ const App = () => {
   const handleNumber = e => {
     setNewNumber(e.target.value);
   };
-
-  const handleAddPersons = e => {
+  const handleAddPersons = async e => {
     e.preventDefault();
 
     const person = {
@@ -32,16 +31,13 @@ const App = () => {
       number: newNumber,
     };
 
-    const handleUpdatePerson = (id, updateContact) => {
-      console.log(id, updateContact);
-    };
-
     const updateContact = persons.find(p => p.name === person.name);
     const updateContactMsg = `${person.name} is already added to phonebook, replace the old number with the new one ?`;
 
     if (updateContact !== undefined) {
-      if(window.confirm(updateContactMsg)) {
-        handleUpdatePerson(person.id, { ...updateContact, ...person });
+      if (window.confirm(updateContactMsg)) {
+        await updatedContact(updateContact.id, person);
+        getContacts().then(contacts => setPersons([...contacts]));
       }
     } else {
       createContact(person).then(contact => setPersons([...persons, contact]));
