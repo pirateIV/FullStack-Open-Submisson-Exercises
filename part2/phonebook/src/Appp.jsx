@@ -17,7 +17,6 @@ const Appp = props => {
   };
 
   const notesToShow = showAll ? notes : notes.filter(note => note.important);
-  // console.log(notesToShow);=
   const addNote = e => {
     e.preventDefault();
 

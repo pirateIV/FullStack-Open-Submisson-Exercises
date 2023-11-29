@@ -22,7 +22,8 @@ const App = () => {
   const handleNumber = e => {
     setNewNumber(e.target.value);
   };
-  const handleAddPersons = async e => {
+
+  const handleAddContacts = async e => {
     e.preventDefault();
 
     const person = {
@@ -72,7 +73,7 @@ const App = () => {
 
       <h3>Add a new</h3>
       <PersonForm
-        persons={handleAddPersons}
+        persons={handleAddContacts}
         names={handleNames}
         number={handleNumber}
         newName={newName}
