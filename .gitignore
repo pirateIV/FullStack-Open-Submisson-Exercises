@@ -1,5 +1,5 @@
 .vscode
 **/node_modules
 
-part2\phonebook\src\App.jsx
-part2\phonebook\src\services\notes2.js
+part2/phonebook/src/Appp.jsx
+part2/phonebook/src/services/notes2.js
