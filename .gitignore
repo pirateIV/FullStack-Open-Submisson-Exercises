@@ -1,2 +1,5 @@
 .vscode
 **/node_modules
+
+**/Appp.jsx
+***/notes2.js
