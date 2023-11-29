@@ -33,12 +33,16 @@ const App = () => {
     };
 
     const handleUpdatePerson = (id, updateContact) => {
-      console.log(id, updateContact)
+      console.log(id, updateContact);
     };
 
     const updateContact = persons.find(p => p.name === person.name);
+    const updateContactMsg = `${person.name} is already added to phonebook, replace the old number with the new one ?`;
+
     if (updateContact !== undefined) {
-      handleUpdatePerson(person.id, { ...updateContact, ...person });
+      if(window.confirm(updateContactMsg)) {
+        handleUpdatePerson(person.id, { ...updateContact, ...person });
+      }
     } else {
       createContact(person).then(contact => setPersons([...persons, contact]));
       alert(`${newName} is already added to phonebook`);
@@ -54,8 +58,8 @@ const App = () => {
   const handleDeleteContact = (id, name) => {
     if (window.confirm(`Delete ${name} ?`)) {
       deleteContact(id).then(() => {
-          setPersons([...persons]);
-          // update contacts
+        setPersons([...persons]);
+        // update contacts
         getContacts().then(contacts => setPersons([...contacts]));
       });
     }
