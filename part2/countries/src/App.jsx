@@ -60,10 +60,13 @@ const App = () => {
     setValue(e.target.value.toLowerCase());
   };
 
-  const filterCountries = countries.filter(country => {
-    const conts = country.toLowerCase().includes(value);
-    return conts;
-  });
+  const filterCountries = countries.filter(country =>
+    country.toLowerCase().includes(value)
+  );
+
+  const handleSelectedCountry = (country) => {
+    setValue(country.toLowerCase())
+  };
 
   return (
     <>
@@ -77,7 +80,10 @@ const App = () => {
               : filterCountries.length > 10
               ? 'Too many matches, specify another filter'
               : filterCountries.map((country, index) => (
-                  <p key={index}>{country}</p>
+                  <p key={index}>
+                    {country}
+                    <button onClick={() => handleSelectedCountry(country)}>show</button>
+                  </p>
                 ))}
           </div>
         ) : (

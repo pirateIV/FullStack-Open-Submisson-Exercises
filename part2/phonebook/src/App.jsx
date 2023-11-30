@@ -22,7 +22,9 @@ const App = () => {
   };
 
   const handleNumber = e => {
-    setNewNumber(e.target.value);
+    try {
+      setNewNumber(e.target.value);
+    } catch (error) {}
   };
 
   const handleAddContacts = async e => {
