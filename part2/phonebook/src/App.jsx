@@ -10,6 +10,8 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
+  const [message, setMessage] = useState('');
+  const [messageState, setMessageState] = useState('');
 
   useEffect(() => {
     getContacts().then(contacts => setPersons([...contacts]));
@@ -38,11 +40,31 @@ const App = () => {
     if (updateContact !== undefined) {
       if (window.confirm(updateContactMsg)) {
         await updatedContact(updateContact.id, person);
-        getContacts().then(contacts => setPersons([...contacts]));
+        getContacts()
+          .then(contacts => setPersons([...contacts]))
+          .catch(error => {
+            setMessage(
+              `Information if ${updateContact.name} has already been removed from server`
+            );
+            setMessageState('error');
+            setTimeout(() => {
+              setMessage(null);
+              setMessageState('');
+            });
+            console.log(error.message);
+          });
       }
     } else {
-      createContact(person).then(contact => setPersons([...persons, contact]));
-      alert(`${newName} is already added to phonebook`);
+      createContact(person).then(contact => {
+        setPersons([...persons, contact]);
+        setMessage(`Added ${newName} to phonebook`);
+        setMessageState('success');
+        setTimeout(() => {
+          setMessage(null);
+          setMessageState('');
+        }, 3000);
+      });
+
       setNewName('');
       setNewNumber('');
     }
@@ -69,6 +91,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} type={messageState} />
       <Filter filter={handleFilterChange} />
 
       <h3>Add a new</h3>
@@ -120,6 +143,14 @@ const Persons = props => {
       ))}
     </div>
   );
+};
+
+const Notification = ({ message, type }) => {
+  if (message === null) {
+    return null;
+  }
+
+  return <div className={type}>{message}</div>;
 };
 
 export default App;
