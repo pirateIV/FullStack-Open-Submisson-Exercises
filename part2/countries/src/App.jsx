@@ -26,28 +26,32 @@ const Country = ({ countryName }) => {
   const [weather, setWeather] = useState({});
 
   useEffect(() => {
-    axios.get(`${baseApiURL}/name/${countryName}`).then(({ data }) => {
-      setCountry(data);
-    });
-  }, [countryName]);
+    const fetchData = async () => {
+      try {
+        const countryResponse = await axios.get(
+          `${baseApiURL}/name/${countryName}`
+        );
+        setCountry(countryResponse.data);
 
-  useEffect(() => {
-    if (country) {
-      axios
-        .get(
-          `https://api.openweathermap.org/data/2.5/weather?q=${country.capital}&appId=${API_KEY}`
-        )
-        .then(({ data }) => {
-          setWeather(data);
-        });
-    }
-  }, [country]);
+        if (countryResponse.data) {
+          const weatherResponse = await axios.get(
+            `https://api.openweathermap.org/data/2.5/weather?q=${countryResponse.data.capital}&appId=${API_KEY}`
+          );
+          setWeather(weatherResponse.data);
+        }
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+    fetchData();
+  }, [countryName]);
 
   if (!country || !weather.weather) {
     return null;
   }
 
-  const weatherIcon = `${iconsURL}/${weather.weather[0].icon}@2x.png`
+  const weatherIcon = `${iconsURL}/${weather.weather[0].icon}@2x.png`;
+  const tempInCelsius = `${Number(weather.main.temp - 273.15).toFixed(2)}`;
 
   return (
     <>
@@ -63,7 +67,9 @@ const Country = ({ countryName }) => {
       </div>
       <div>
         <h2>Weather in {country.capital}</h2>
-        <img src={weatherIcon} alt="" /> 
+
+        <p>temperature {tempInCelsius} Celsius</p>
+        <img src={weatherIcon} alt='' />
         <p>wind {weather.wind.speed} m/s</p>
       </div>
     </>
@@ -75,9 +81,12 @@ const App = () => {
   const [countries, setCountries] = useState([]);
 
   useEffect(() => {
-    axios.get(`${baseApiURL}/all`).then(res => {
-      setCountries(res.data.map(c => c.name.common));
-    });
+    const fetchCountryData = async () => {
+      await axios.get(`${baseApiURL}/all`).then(res => {
+        setCountries(res.data.map(c => c.name.common));
+      });
+    };
+    fetchCountryData();
   }, [value]);
 
   const handleSearchCountries = e => {
