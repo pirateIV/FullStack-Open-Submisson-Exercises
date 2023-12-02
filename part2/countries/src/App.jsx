@@ -2,11 +2,14 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
 const baseApiURL = `https://studies.cs.helsinki.fi/restcountries/api`;
+const iconsURL = `https://openweathermap.org/img/wn`;
+
+const API_KEY = import.meta.env.VITE_API_KEY;
 
 const Languages = ({ languages }) => (
   <>
     <div>
-      <h3>Languages: </h3>
+      <h4>Languages: </h4>
       {
         <ul>
           {Object.values(languages).map((lang, i) => (
@@ -20,15 +23,31 @@ const Languages = ({ languages }) => (
 
 const Country = ({ countryName }) => {
   const [country, setCountry] = useState(null);
+  const [weather, setWeather] = useState({});
+
   useEffect(() => {
     axios.get(`${baseApiURL}/name/${countryName}`).then(({ data }) => {
       setCountry(data);
     });
   }, [countryName]);
 
-  if (!country) {
+  useEffect(() => {
+    if (country) {
+      axios
+        .get(
+          `https://api.openweathermap.org/data/2.5/weather?q=${country.capital}&appId=${API_KEY}`
+        )
+        .then(({ data }) => {
+          setWeather(data);
+        });
+    }
+  }, [country]);
+
+  if (!country || !weather.weather) {
     return null;
   }
+
+  const weatherIcon = `${iconsURL}/${weather.weather[0].icon}@2x.png`
 
   return (
     <>
@@ -41,6 +60,11 @@ const Country = ({ countryName }) => {
       <Languages languages={country.languages} />
       <div>
         <img src={country.flags.png} alt={country.flags.alt} />
+      </div>
+      <div>
+        <h2>Weather in {country.capital}</h2>
+        <img src={weatherIcon} alt="" /> 
+        <p>wind {weather.wind.speed} m/s</p>
       </div>
     </>
   );
@@ -64,8 +88,8 @@ const App = () => {
     country.toLowerCase().includes(value)
   );
 
-  const handleSelectedCountry = (country) => {
-    setValue(country.toLowerCase())
+  const handleSelectedCountry = country => {
+    setValue(country.toLowerCase());
   };
 
   return (
@@ -82,7 +106,9 @@ const App = () => {
               : filterCountries.map((country, index) => (
                   <p key={index}>
                     {country}
-                    <button onClick={() => handleSelectedCountry(country)}>show</button>
+                    <button onClick={() => handleSelectedCountry(country)}>
+                      show
+                    </button>
                   </p>
                 ))}
           </div>

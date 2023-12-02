@@ -1,6 +1,8 @@
 .vscode
 **/node_modules
 
+**/.env
+
 part2/phonebook/src/Appp.jsx
 part2/countries/src/Appp.jsx
 part2/phonebook/src/services/notes2.js
