@@ -3,6 +3,11 @@
 
 **/.env
 
-part2/phonebook/src/Appp.jsx
+# JSX files for learning examples, referenced as App.jsx
+part2/phonebook/src/Appp.jsx  
 part2/countries/src/Appp.jsx
+
 part2/phonebook/src/services/notes2.js
+
+**/index.js
+**/requests
