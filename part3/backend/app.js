@@ -1,8 +1,18 @@
 const express = require('express');
+const morgan = require('morgan');
+const cors = require('cors')
 
 const app = express();
 
+// app.use(express.static('dist'))
+
+// middleware for parsing json requests
 app.use(express.json());
+app.use(cors())
+
+morgan.token('body', (req) => JSON.stringify(req.body));
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
 let phonebookEntries = [
   {
@@ -27,99 +37,119 @@ let phonebookEntries = [
   },
 ];
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
-app.get('/', (request, response) => {
-  response.send(`<h1>Phonebook Backend</h1>`);
+app.get('/', (req, res) => {
+  res.send('<h1>Hello World!</h1>');
 });
 
-app.get('/api/persons', (request, response) => {
-  response.json(phonebookEntries);
+app.get('/api/persons', (req, res) => {
+  res.json(phonebookEntries);
 });
 
-app.get('/info', (request, response) => {
-  const contactsLength = phonebookEntries.length;
-  let date = new Date();
-  response.send(
-    `
-      <p>Phonebook has info for ${contactsLength} people</p>
-      <p>${date}</p>
-    `
-  );
-});
+app.get('/info', (req, res) => {
+  const info = `
+    <div>
+      <p>Phonebook has info for ${phonebookEntries.length} people</p>
+      <p>${new Date()}</p>
+    </div>  
+`;
+  res.send(info);
+}); 
+
+// -------- NOTE -------------
+
+// Middleware is a function that accepts three parameters
+
+const requestLogger = (req, res, next) => {
+  console.log('Method: ', req.method);
+  console.log('Path: ', req.path);
+  console.log('Body: ', req.body);
+  console.log('---');
+  next();
+};
+
+// execute middleare for every requests
+app.use(requestLogger);
+
+// const unknownEndpoint = (req, res, next) => {
+//   res.status(400).send({ error: 'unknown endpoint' });
+// };
+
+// app.use(unknownEndpoint);
 
 // get single phonebook entry
-app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id);
+app.get('/api/persons/:id', (req, res) => {
+  const id = Number(req.params.id); 
 
-  const person = phonebookEntries.find(p => p.id === id);
-  person ? response.json(person) : response.status(404).end();
+  const contact = phonebookEntries.find((entry) => entry.id === id);
+
+  if (!contact) {
+    res.status(404).json({ error: 'contact not found!' }).end();
+  }
+
+  res.status(201).json(contact);
 });
 
 // delete single phonebook entry
-app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id);
+app.delete('/api/persons/:id', (req, res) => {
+  const id = Number(req.params.id);
 
-  phonebookEntries = phonebookEntries.filter(entry => entry.id !== id);
-  response.status(204).end();
+  if (!phonebookEntries[id]) {
+    res.status(404).send('contact not found');
+  }
+
+  phonebookEntries = phonebookEntries.filter((entry) => entry.id !== id);
+
+  res.status(204).end();
 });
 
-const genrateRandomId = () => {
-  let random = '';
-  for (let i = 1; i < 8; i++) {
-    random += Math.floor(Math.random() * 10);
+// generate random id for contact
+const generateId = () => {
+  let id = '';
+  for (let i = 0; i < 10; i++) {
+    id += Math.floor(Math.random() * 10);
   }
-  return parseInt(random);
+  return Number(id);
 };
 
-// add to contact to phonebook
-app.post('/api/persons/', (request, response) => {
-  const name = request.body.name;
-  const number = request.body.number;
-
-  const newContact = {
-    id: genrateRandomId(),
-    name: name,
-    number: number,
-  };
-
-  const res = handleErrors.findExistingContact(newContact);
-  const isAddedContact = handleErrors.emptyFields(newContact);
-  if (res.error) {
-    return response.status(409).json(res);
-  } else if (isAddedContact.error) {
-    console.log(isAddedContact);
-    return response.json(isAddedContact);
-  } else {
-    phonebookEntries = phonebookEntries.concat(newContact);
-    return response.status(201).json(res);
+const checkMissingDetails = (name, number) => {
+  if (!name.trim() || !number.trim()) {
+    return { err: 'Please fill in the missing details' };
   }
+};
+
+const checkExistingContact = (name) => {
+  const isExistingContact = phonebookEntries.find((entry) => {
+    return entry.name === name;
+  });
+  if (isExistingContact) {
+    return { err: `name must be unique, ${name} already exists` };
+  }
+};
+
+// create new contact
+app.post('/api/persons', (req, res) => {
+  const { name, number } = req.body;
+
+  const newContact = { name, number, id: generateId() };
+
+  let isExisting = checkExistingContact(name);
+  let isMissingDetails = checkMissingDetails(name, number);
+
+  if (isExisting) {
+    return res.status(400).json(isExisting);
+  }
+
+  if (isMissingDetails) {
+    return res.status(400).json(isMissingDetails);
+  }
+
+  // reach this point if there are no errors
+  phonebookEntries = phonebookEntries.concat(newContact);
+  return res.status(201).json({ msg: 'new contact added', newContact });
 });
-
-const handleErrors = {
-  findExistingContact: newContact => {
-    const existingContact = phonebookEntries.find(
-      entry => entry.name === newContact.name
-    );
-    if (existingContact) {
-      return {
-        error: `name must be unique, ${newContact.name} already exists in the phonebook`,
-      };
-    } else {
-      return newContact;
-    }
-  },
-  emptyFields: newContact => {
-    const { name, number } = newContact;
-
-    if (name === '' || number === '') {
-      return { error: 'name or number must not be empty' };
-    } else {
-      return newContact;
-    }
-  },
-};
 
 app.listen(PORT, () => {
-  console.log(`Server is running at url \n\n\n http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

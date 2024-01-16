@@ -12,7 +12,7 @@
 }
 
 body {
-  font-family:  'Dejavu sans';
+  font-family:  'Public sans';
 }
 
 .error {
@@ -33,8 +33,4 @@ body {
   border-radius: 5px;
   padding: 5px;
   margin-bottom: 10px;
-}
-
-.contact span {
-  margin-right: 10px;
 }
