@@ -1,14 +1,14 @@
 const express = require('express');
 const morgan = require('morgan');
-const cors = require('cors')
+const cors = require('cors');
 
 const app = express();
 
-// app.use(express.static('dist'))
+app.use(express.static('dist'))
 
 // middleware for parsing json requests
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 
 morgan.token('body', (req) => JSON.stringify(req.body));
 
@@ -55,7 +55,7 @@ app.get('/info', (req, res) => {
     </div>  
 `;
   res.send(info);
-}); 
+});
 
 // -------- NOTE -------------
 
@@ -72,15 +72,16 @@ const requestLogger = (req, res, next) => {
 // execute middleare for every requests
 app.use(requestLogger);
 
-// const unknownEndpoint = (req, res, next) => {
-//   res.status(400).send({ error: 'unknown endpoint' });
-// };
+// route used for unknown routes(endpoints)
+const unknownEndpoint = (req, res, next) => {
+  res.status(400).send({ error: 'unknown endpoint' });
+};
 
 // app.use(unknownEndpoint);
 
 // get single phonebook entry
 app.get('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id); 
+  const id = Number(req.params.id);
 
   const contact = phonebookEntries.find((entry) => entry.id === id);
 
@@ -95,8 +96,9 @@ app.get('/api/persons/:id', (req, res) => {
 app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id);
 
-  if (!phonebookEntries[id]) {
+  if (!id) {
     res.status(404).send('contact not found');
+    return;
   }
 
   phonebookEntries = phonebookEntries.filter((entry) => entry.id !== id);
@@ -148,6 +150,25 @@ app.post('/api/persons', (req, res) => {
   // reach this point if there are no errors
   phonebookEntries = phonebookEntries.concat(newContact);
   return res.status(201).json({ msg: 'new contact added', newContact });
+});
+
+// const editContact
+app.put('/api/persons/:id', (req, res) => {
+  const contactId = Number(req.params.id);
+
+  const { name, number } = req.body;
+
+  const contact = phonebookEntries.find((contact) => contact.id === contactId);
+
+  if (!contact) {
+    return res.status(404).json({ err: 'contact not found!' });
+  }
+
+  phonebookEntries = phonebookEntries.map((entry) =>
+    entry.name === name ? { ...entry, number } : entry
+  );
+
+  res.status(200).json(phonebookEntries);
 });
 
 app.listen(PORT, () => {
