@@ -72,6 +72,16 @@ const App = () => {
     });
   };
 
+  const checkValidity = (name, number) => {
+    if (!name && !number) {
+      alert('Please both fields are required');
+    } else if (!name) {
+      alert('The contact name field is required');
+    } else if (!number) {
+      alert('The contact number field is required');
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
