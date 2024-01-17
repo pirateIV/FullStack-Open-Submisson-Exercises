@@ -31,16 +31,10 @@ const App = () => {
     const id = persons.length > 1 ? Math.max(...persons.map(({ id }) => id)) + 1 : 1;
     const newContact = { id, name: newName.trim(), number: number.trim() };
 
-    const { name, number } = newContact;
-
-    if (!name || !number || (!name && !number)) {
-      checkValidity(name, number);
-      return;
-    }
-
     if (isExistingContact(persons, newContact)) {
       alert(
-        `${name} already exists in the phonebook, replace the old number with the new one ?`
+        `${newContact.name} already exists in the phonebook,
+          replace the old number with the new one ?`
       );
       handleEditContact(newContact);
       return;
@@ -66,16 +60,6 @@ const App = () => {
       return person.name === newContact.name;
     });
     return existingContact;
-  };
-
-  const checkValidity = (name, number) => {
-    if (!name && !number) {
-      alert('Please both fields are required');
-    } else if (!name) {
-      alert('The contact name field is required');
-    } else if (!number) {
-      alert('The contact number field is required');
-    }
   };
 
   const handleEditContact = (contact) => {
