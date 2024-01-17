@@ -21,10 +21,10 @@ const deleteContact = async id => {
   return data;
 };
 
-const updatedContact = async (id, updatedObj) => {
+const updateContact = async (id, updatedObj) => {
   const request = axios.put(`${baseUrl}/${id}`, updatedObj);
   const { data } = await request;
   return data;
 };
 
-export default { getContacts, createContact, deleteContact, updatedContact };
+export default { getContacts, createContact, deleteContact, updateContact };

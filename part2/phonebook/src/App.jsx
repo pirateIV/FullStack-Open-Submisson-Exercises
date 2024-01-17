@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import axios from 'axios';
-
 import contacts from './services/contacts';
-
-// let phonebookEntries = [
-//   { name: 'Arto Hellas', number: '040-123456', id: 1 },
-//   { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-//   { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-//   { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 },
-// ];
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -18,8 +9,12 @@ const App = () => {
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
+    fetchContacts();
+  }, []);
+
+  const fetchContacts = async () => {
     contacts.getContacts().then((contactList) => setPersons(contactList));
-  }, [persons]);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -35,7 +30,8 @@ const App = () => {
 
     if (isExistingContact(persons, newContact)) {
       alert(
-        `${newContact.name} already exists in the phonebook, replace the old number with the new one ?`
+        `${newContact.name} already exists in the phonebook,
+          replace the old number with the new one ?`
       );
       handleEditContact(newContact);
       return;
@@ -48,7 +44,12 @@ const App = () => {
   };
 
   const handleDeleteContact = (id) => {
-    setPersons(persons.filter((persons) => persons.id !== id));
+    const confirmMessage = 'Are you sure you want to delete this contact ?';
+    if (window.confirm(confirmMessage)) {
+      contacts.deleteContact(id).then(() => {
+        setPersons(persons.filter((persons) => persons.id !== id));
+      });
+    }
   };
 
   const isExistingContact = (persons, newContact) => {
@@ -58,23 +59,21 @@ const App = () => {
     return existingContact;
   };
 
-  const handleEditContact = (newContact) => {
-    const updatedContacts = persons.map((person) => {
-      return person.name === newContact.name
-        ? { ...person, number: newContact.number }
-        : person;
+  const handleEditContact = (contact) => {
+    persons.find((person) => {
+      if (person.name === contact.name) {
+        contacts.updateContact(person.id, contact).then((contacts) => {
+          setPersons(contacts);
+        });
+      }
     });
-    setPersons(updatedContacts);
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
 
-      <Filter
-        filter={filter}
-        setFilter={setFilter}
-      />
+      <Filter filter={filter} setFilter={setFilter} />
 
       <h3>add a new</h3>
 
@@ -106,11 +105,7 @@ const Filter = ({ filter, setFilter }) => {
     <form className='filter__contact-form'>
       <label>
         filter shown with:
-        <input
-          type='text'
-          value={filter}
-          onChange={(e) => handleFilterContacts(e)}
-        />
+        <input type='text' value={filter} onChange={(e) => handleFilterContacts(e)} />
       </label>
     </form>
   );
@@ -124,9 +119,7 @@ const Persons = ({ persons, filter, handleDeleteContact }) => {
   return (
     <div className='contacts'>
       {filteredContacts?.map(({ id, name, number }) => (
-        <div
-          key={id}
-          className='contact'>
+        <div key={id} className='contact'>
           <span>
             {' '}
             {name} {number}
@@ -145,19 +138,11 @@ const PersonForm = (props) => {
     <form onSubmit={handleSubmit}>
       <div>
         name:
-        <input
-          type='text'
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-        />
+        <input type='text' value={newName} onChange={(e) => setNewName(e.target.value)} />
       </div>
       <div>
         number:
-        <input
-          type='text'
-          value={number}
-          onChange={(e) => setNumber(e.target.value)}
-        />
+        <input type='text' value={number} onChange={(e) => setNumber(e.target.value)} />
       </div>
       <div>
         <button type='submit'>add</button>
