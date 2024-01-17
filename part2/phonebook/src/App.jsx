@@ -23,13 +23,20 @@ const App = () => {
     e.preventDefault();
 
     handleAddContact();
-    setNewName('');
-    setNumber('');
   };
 
   const handleAddContact = () => {
     const id = persons.length > 1 ? Math.max(...persons.map(({ id }) => id)) + 1 : 1;
     const newContact = { id, name: newName.trim(), number: number.trim() };
+
+    if (
+      !newContact.name ||
+      !newContact.number ||
+      (!newContact.name && newContact.number)
+    ) {
+      checkValidity(newContact.name, newContact.number);
+      return;
+    }
 
     if (isExistingContact(persons, newContact)) {
       alert(
@@ -43,6 +50,7 @@ const App = () => {
     contacts.createContact(newContact).then(({ newContact }) => {
       setPersons(persons.concat(newContact));
       setTimeout(() => alert(`${newName} is already added to phonebook`), 100);
+      resetForm()
     });
   };
 
@@ -65,8 +73,10 @@ const App = () => {
   const handleEditContact = (contact) => {
     persons.find((person) => {
       if (person.name === contact.name) {
+        checkValidity(person.name, person.number);
         contacts.updateContact(person.id, contact).then((contacts) => {
           setPersons(contacts);
+          resetForm()
         });
       }
     });
@@ -80,6 +90,11 @@ const App = () => {
     } else if (!number) {
       alert('The contact number field is required');
     }
+  };
+
+  const resetForm = () => {
+    setNewName('');
+    setNumber('');
   };
 
   return (
