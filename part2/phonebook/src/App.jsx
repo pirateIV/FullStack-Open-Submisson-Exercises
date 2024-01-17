@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
 import contacts from './services/contacts';
+import PersonForm from './PersonForm';
+import Filter from './Filter';
+import Persons from './Persons';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -93,61 +96,6 @@ const App = () => {
         handleDeleteContact={handleDeleteContact}
       />
     </div>
-  );
-};
-
-const Filter = ({ filter, setFilter }) => {
-  const handleFilterContacts = (e) => {
-    setFilter(e.target.value);
-  };
-
-  return (
-    <form className='filter__contact-form'>
-      <label>
-        filter shown with:
-        <input type='text' value={filter} onChange={(e) => handleFilterContacts(e)} />
-      </label>
-    </form>
-  );
-};
-
-const Persons = ({ persons, filter, handleDeleteContact }) => {
-  const filteredContacts = persons.filter((person) => {
-    return person.name.toLowerCase().includes(filter.toLowerCase());
-  });
-
-  return (
-    <div className='contacts'>
-      {filteredContacts?.map(({ id, name, number }) => (
-        <div key={id} className='contact'>
-          <span>
-            {' '}
-            {name} {number}
-          </span>
-          <button onClick={() => handleDeleteContact(id)}>Delete</button>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const PersonForm = (props) => {
-  const { newName, number, setNewName, setNumber, handleSubmit } = props;
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        name:
-        <input type='text' value={newName} onChange={(e) => setNewName(e.target.value)} />
-      </div>
-      <div>
-        number:
-        <input type='text' value={number} onChange={(e) => setNumber(e.target.value)} />
-      </div>
-      <div>
-        <button type='submit'>add</button>
-      </div>
-    </form>
   );
 };
 
