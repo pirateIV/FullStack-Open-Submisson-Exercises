@@ -4,7 +4,7 @@ const cors = require('cors');
 
 const app = express();
 
-app.use(express.static('dist'))
+app.use(express.static('dist'));
 
 // middleware for parsing json requests
 app.use(express.json());
@@ -14,48 +14,7 @@ morgan.token('body', (req) => JSON.stringify(req.body));
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
-let phonebookEntries = [
-  {
-    id: 1,
-    name: 'Arto Hellas',
-    number: '040-123456',
-  },
-  {
-    id: 2,
-    name: 'Ada Lovelace',
-    number: '39-44-5323523',
-  },
-  {
-    id: 3,
-    name: 'Dan Abramov',
-    number: '12-43-234345',
-  },
-  {
-    id: 4,
-    name: 'Mary Poppendieck',
-    number: '39-23-6423122',
-  },
-];
-
 const PORT = process.env.PORT || 3001;
-
-app.get('/', (req, res) => {
-  res.send('<h1>Hello World!</h1>');
-});
-
-app.get('/api/persons', (req, res) => {
-  res.json(phonebookEntries);
-});
-
-app.get('/info', (req, res) => {
-  const info = `
-    <div>
-      <p>Phonebook has info for ${phonebookEntries.length} people</p>
-      <p>${new Date()}</p>
-    </div>  
-`; 
-  res.send(info);
-});
 
 // -------- NOTE -------------
 
@@ -77,7 +36,24 @@ const unknownEndpoint = (req, res, next) => {
   res.status(400).send({ error: 'unknown endpoint' });
 };
 
-// app.use(unknownEndpoint);
+app.get('/', (req, res) => {
+  res.send('<h1>Hello World!</h1>');
+});
+
+app.get('/info', (req, res) => {
+  const info = `
+    <div>
+      <p>Phonebook has info for ${phonebookEntries.length} people</p>
+      <p>${new Date()}</p>
+    </div>  
+`;
+  res.send(info);
+});
+
+// get all phonebook entries
+app.get('/api/persons', (req, res) => {
+  res.status(200).json(phonebookEntries);
+});
 
 // get single phonebook entry
 app.get('/api/persons/:id', (req, res) => {
@@ -142,7 +118,7 @@ app.post('/api/persons', (req, res) => {
   if (isExisting) {
     return res.status(400).json(isExisting);
   }
- 
+
   if (isMissingDetails) {
     return res.status(400).json(isMissingDetails);
   }

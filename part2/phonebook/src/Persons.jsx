@@ -5,15 +5,21 @@ const Persons = ({ persons, filter, handleDeleteContact }) => {
 
   return (
     <div className='contacts'>
-      {filteredContacts?.map(({ id, name, number }) => (
-        <div key={id} className='contact'>
-          <span>
-            {' '}
-            {name} {number}
-          </span>
-          <button onClick={() => handleDeleteContact(id)}>Delete</button>
-        </div>
-      ))}
+      {persons.length > 0
+        ? filteredContacts?.map(({ id, name, number }) => (
+            <div key={id} className='contact'>
+              <span>
+                {' '}
+                {name} {number}
+              </span>
+              <button onClick={() => handleDeleteContact(id)}>Delete</button>
+            </div>
+          ))
+        : persons.length === 0 && (
+            <p>
+              <i>No contacts found...</i>
+            </p>
+          )}
     </div>
   );
 };
