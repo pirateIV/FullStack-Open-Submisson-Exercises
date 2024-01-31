@@ -11,8 +11,20 @@ const url = `mongodb+srv://Benjamin:${password}@cluster0.ct2wgbz.mongodb.net/not
 mongoose.set('strictQuery', false);
 mongoose.connect(url);
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' });
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).send({ error: error.message });
+  }
+
+  next(error);
+};
+
 const noteSchema = mongoose.Schema({
-  content: String,
+  content: { type: String, minLength: 5, required: true },
   important: Boolean,
 });
 

@@ -38,3 +38,12 @@ body {
 .contact span {
   margin-right: 10px;
 }
+
+#message {
+  padding: 5px;
+  color: red;
+  border-radius: 10px;
+  border: 3px solid red;
+  background-color: #e5e4e4;
+  margin: 20px 0;
+}

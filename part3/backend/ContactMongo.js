@@ -49,8 +49,8 @@ Contact.find({}).then((persons) => {
   mongoose.connection.close();
 }); 
 
-// const note = new Note({
-//   content: 'Coding is Easy',
+// const note = new Note({    
+//   content: 'Coding is Easy',          
 //   important: false,
 // });
 

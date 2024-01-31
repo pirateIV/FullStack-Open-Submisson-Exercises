@@ -9,21 +9,21 @@ const getContacts = async () => {
   return data;
 };
 
-const createContact = async contactObj => {
+const createContact = async (contactObj) => {
   const request = axios.post(baseUrl, contactObj);
   const { data } = await request;
   return data;
 };
 
-const deleteContact = async id => {
+const deleteContact = async (id) => {
   const request = axios.delete(`${baseUrl}/${id}`);
   const { data } = await request;
   return data;
 };
 
 const updateContact = async (id, updatedObj) => {
-  const request = axios.put(`${baseUrl}/${id}`, updatedObj);
-  const { data } = await request;
+  const response = axios.put(`${baseUrl}/${id}`, updatedObj);
+  const { data } = await response;
   return data;
 };
 

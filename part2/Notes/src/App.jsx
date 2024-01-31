@@ -1,74 +1,24 @@
-import { useEffect, useState } from 'react';
-import Note from './components/Note';
-import noteService from './services/notes';
+import React from 'react';
 
-const App = (props) => {
-  const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState('');
-  const [showAll, setShowAll] = useState(true);
-  const [showMessage, setShowMessage] = useState(true);
+import Header from './components/Header';
+import Balance from './components/Balance.jsx';
+import IncomeExpenses from './components/IncomeExpenses.jsx';
+import TransactionList from './components/TransactionList.jsx';
+import AddTransaction from './components/AddTransaction.jsx';
 
-  useEffect(() => {
-    noteService.getAll().then((initialRes) => setNotes(initialRes));
-  }, []);
+import { GlobalProvider } from './context/GlobalState.jsx';
 
-  const handleNoteChange = (e) => {
-    setNewNote(e.target.value);
-  };
-
-  const notesToShow = showAll ? notes : notes.filter((note) => note.important);
-  const addNote = (e) => {
-    e.preventDefault();
-
-    const noteObject = {
-      id: notes.length + 1,
-      important: Math.random() < 0.5,
-      content: newNote,
-    };
-
-    noteService.create(noteObject).then(({ data }) => {
-      setNotes(notes.concat(data));
-      setNewNote('');
-    });
-
-    setNotes(notes.concat(noteObject));
-    setNewNote('');
-  };
-
-  const toggleImportanceOf = (id) => {
-    const url = `http://localhost:3000/api/notes/${id}`;
-    const note = notes.find((n) => n.id === id);
-
-    const changeNote = { ...note, important: !note.important };
-
-    noteService.update(id, changeNote).then((updatedNote) => {
-      setNotes(notes.map((n) => (n.id !== id ? n : updatedNote)));
-    });
-  };
-
+const App = () => {
   return (
-    <div>
-      <h1>Notes</h1>
-      <ul>
-        {notesToShow.map((note) => (
-          <Note
-            key={note.id}
-            note={note}
-            toggleImportanceOf={() => toggleImportanceOf(note.id)}
-          />
-        ))}
-        <button
-          onClick={() => {
-            setShowAll(!showAll);
-          }}>
-          show {showAll ? 'important' : 'all'}
-        </button>
-      </ul>
-      <form onSubmit={addNote}>
-        <input value={newNote} type='text' onChange={handleNoteChange} />
-        <button type='submit'>save</button>
-      </form>
-    </div>
+    <GlobalProvider>
+      <Header />
+      <div className='container'>
+        <Balance />
+        <IncomeExpenses />
+        <TransactionList />
+        <AddTransaction />
+      </div>
+    </GlobalProvider>
   );
 };
 

@@ -6,28 +6,34 @@ import Filter from './Filter';
 import Persons from './Persons';
 
 const App = () => {
-  const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState('');
-  const [number, setNumber] = useState('');
   const [filter, setFilter] = useState('');
+  const [number, setNumber] = useState('');
+  const [newName, setNewName] = useState('');
+  const [message, setMessage] = useState('');
+  const [persons, setPersons] = useState([]);
+  const [validationSuccesss, setValidationSuccess] = useState(false);
+
+  const [fetchTrigger, setFetchTrigger] = useState(0);
 
   useEffect(() => {
     fetchContacts();
-  }, []);
+  }, [fetchTrigger]);
 
-  const fetchContacts = async () => {
-    contacts.getContacts().then((contactList) => setPersons(contactList));
+  const fetchContacts = () => {
+    contacts.getContacts().then((contacts) => {
+      setPersons(contacts);
+      console.log(contacts);
+    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    handleAddContact();
+    handleSubmission();
   };
 
-  const handleAddContact = () => {
-    const id = persons.length > 1 ? Math.max(...persons.map(({ id }) => id)) + 1 : 1;
-    const newContact = { id, name: newName.trim(), number: number.trim() };
+  const handleSubmission = () => {
+    const newContact = { name: newName.trim(), number: number.trim() };
 
     if (
       !newContact.name ||
@@ -39,19 +45,31 @@ const App = () => {
     }
 
     if (isExistingContact(persons, newContact)) {
-      alert(
-        `${newContact.name} already exists in the phonebook,
-          replace the old number with the new one ?`
-      );
       handleEditContact(newContact);
       return;
     }
+    handleAddContact(newContact);
+  };
 
-    contacts.createContact(newContact).then(({ newContact }) => {
-      setPersons(persons.concat(newContact));
-      setTimeout(() => alert(`${newName} is already added to phonebook`), 100);
-      resetForm()
-    });
+  const handleAddContact = async (newContact) => {
+    contacts
+      .createContact(newContact)
+      .then(async () => {
+        // get the list of updated contacts
+        const updatedContacts = await contacts.getContacts();
+        setFetchTrigger((prev) => prev + 1);
+        setPersons(updatedContacts);
+        return;
+      })
+      .catch((error) => {
+        if (error) {
+          const errorMessage = error.response.data.error;
+          handleSetMessage(errorMessage);
+        }
+        return;
+      });
+
+    resetForm();
   };
 
   const handleDeleteContact = (id) => {
@@ -70,16 +88,31 @@ const App = () => {
     return existingContact;
   };
 
-  const handleEditContact = (contact) => {
-    persons.find((person) => {
-      if (person.name === contact.name) {
-        checkValidity(person.name, person.number);
-        contacts.updateContact(person.id, contact).then((contacts) => {
-          setPersons(contacts);
-          resetForm()
-        });
-      }
-    });
+  const handleEditContact = async (contact) => {
+    const existingContact = persons.find((person) => person.name === contact.name);
+
+    if (!existingContact) {
+      console.error('contact not found for editing', error);
+    }
+
+    const id = existingContact.id;
+    const contactToUpdate = { name: contact.name, number: contact.number };
+
+    await contacts
+      .updateContact(id, contactToUpdate)
+      .then((contact) => {
+        console.log(contact);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleSetMessage = (msg) => {
+    setMessage(msg);
+    setTimeout(() => {
+      setMessage('');
+    }, 5000);
   };
 
   const checkValidity = (name, number) => {
@@ -101,6 +134,8 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
 
+      {message !== '' && <div id='message'>{message}</div>}
+
       <Filter filter={filter} setFilter={setFilter} />
 
       <h3>add a new</h3>
@@ -118,6 +153,7 @@ const App = () => {
       <Persons
         filter={filter}
         persons={persons}
+        fetchContacts={fetchContacts}
         handleDeleteContact={handleDeleteContact}
       />
     </div>
