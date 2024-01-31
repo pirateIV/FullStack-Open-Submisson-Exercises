@@ -11,7 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [message, setMessage] = useState('');
   const [persons, setPersons] = useState([]);
-  const [validationSuccesss, setValidationSuccess] = useState(false);
+  const [statusColor, setStatusColor] = useState('');
 
   const [fetchTrigger, setFetchTrigger] = useState(0);
 
@@ -59,14 +59,12 @@ const App = () => {
         const updatedContacts = await contacts.getContacts();
         setFetchTrigger((prev) => prev + 1);
         setPersons(updatedContacts);
+        handleSetMessage(`${newContact.name} added to the phonebook`, 'green')
         return;
       })
       .catch((error) => {
-        if (error) {
-          const errorMessage = error.response.data.error;
-          handleSetMessage(errorMessage);
-        }
-        return;
+        const errorMessage = error.response.data.error;
+        handleSetMessage(errorMessage, 'red');
       });
 
     resetForm();
@@ -98,18 +96,30 @@ const App = () => {
     const id = existingContact.id;
     const contactToUpdate = { name: contact.name, number: contact.number };
 
-    await contacts
-      .updateContact(id, contactToUpdate)
-      .then((contact) => {
-        console.log(contact);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    try {
+      const confirmEdit = window.confirm(
+        `${contact.name} already exists in the phonebook, replace the old number with the new one ?`
+      );
+      if (confirmEdit) {
+        await contacts.updateContact(id, contactToUpdate);
+
+        setPersons((persons) => {
+          return persons.map((person) =>
+            person.id === existingContact.id ? { ...person, ...contactToUpdate } : person
+          );
+        });
+
+        resetForm();
+      }
+    } catch (error) {
+      const errorMessage = error.response.data.error;
+      handleSetMessage(errorMessage, 'red');
+    }
   };
 
-  const handleSetMessage = (msg) => {
+  const handleSetMessage = (msg, color) => {
     setMessage(msg);
+    setStatusColor(color);
     setTimeout(() => {
       setMessage('');
     }, 5000);
@@ -134,7 +144,16 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
 
-      {message !== '' && <div id='message'>{message}</div>}
+      {message !== '' && (
+        <div
+          id='message'
+          style={{
+            color: `${statusColor}`,
+            border: `3px solid ${statusColor}`,
+          }}>
+          {message}
+        </div>
+      )}
 
       <Filter filter={filter} setFilter={setFilter} />
 
