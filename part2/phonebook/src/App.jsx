@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
 import contacts from './services/contacts';
-import PersonForm from './PersonForm';
-import Filter from './Filter';
-import Persons from './Persons';
+import PersonForm from './components/PersonForm';
+import Filter from './components/Filter';
+import Persons from './components/Persons';
 
 const App = () => {
   const [filter, setFilter] = useState('');
@@ -12,7 +12,6 @@ const App = () => {
   const [message, setMessage] = useState('');
   const [persons, setPersons] = useState([]);
   const [statusColor, setStatusColor] = useState('');
-
   const [fetchTrigger, setFetchTrigger] = useState(0);
 
   useEffect(() => {
