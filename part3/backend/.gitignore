@@ -1,0 +1,8 @@
+node_modules
+.env
+
+# tryouts
+NoteMongo.js
+ContactMongo.js
+moviesBackend.js
+ExpressBackendApp.js
