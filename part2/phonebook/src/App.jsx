@@ -166,7 +166,7 @@ const App = () => {
         handleSubmit={handleSubmit}
       />
 
-      <h2>Numbers</h2>
+      <h3>Numbers</h3>
 
       <Persons
         filter={filter}

@@ -1,38 +1,59 @@
-:root {
-  font-family: Public sans, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  /* color-scheme: light dark; */
-  /* color: rgba(255, 255, 255, 0.87);
-  background-color: #242424; */
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins';
 }
 
 body {
-  font-family:  'Dejavu sans';
+  padding: 20px 0 0 20px;
+  font-family: inherit;
 }
 
-.error {
-  color: red;
-  background-color: lightgray;
-  font-size: 20px;
-  border-style: solid;
-  border-radius: 5px;
-  padding: 5px;
-  margin-bottom: 10px;
+h2 {
+  font-weight: 500;
+  margin-bottom: 20px;
+  color: brown;
 }
 
-.success {
-  color: green;
-  background-color: lightgray;
-  font-size: 20px;
-  border-style: solid;
-  border-radius: 5px;
-  padding: 5px;
-  margin-bottom: 10px;
+h3 {
+  font-weight: 400;
+  color: brown;
+  margin: 40px 0 10px 0;
+}
+
+h3::first-letter {
+  text-transform: uppercase;
+}
+
+form {
+  gap: 15px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+input {
+  width: 200px;
+  display: block;
+  padding: 0.3rem;
+  outline: none;
+  margin: 0.5rem 0 0.5rem 0;
+  border: 2px solid #222;
+}
+
+button {
+  width: 210px;
+  padding: 0.3rem;
+}
+
+input:focus,
+button:focus {
+  outline: 3px solid rgba(0, 0, 0, 0.4);
+}
+
+input::placeholder {
+  color: #555;
 }
 
 .contact span {

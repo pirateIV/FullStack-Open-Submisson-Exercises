@@ -7,7 +7,7 @@ const Filter = ({ filter, setFilter }) => {
     <form className='filter__contact-form'>
       <label>
         filter shown with:
-        <input type='text' value={filter} onChange={(e) => handleFilterContacts(e)} />
+        <input type='text' value={filter} placeholder="search contacts..." onChange={(e) => handleFilterContacts(e)} />
       </label>
     </form>
   );
