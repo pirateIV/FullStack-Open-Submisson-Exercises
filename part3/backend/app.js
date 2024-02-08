@@ -1,6 +1,7 @@
 const express = require('express');
-const morgan = require('morgan');
 const cors = require('cors');
+const morgan = require('morgan');
+const {requestLogger} = require('./utils/middleware/requestLogger');
 
 const app = express();
 
@@ -13,20 +14,6 @@ app.use(cors());
 morgan.token('body', (req) => JSON.stringify(req.body));
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
-
-const PORT = process.env.PORT || 3001;
-
-// -------- NOTE -------------
-
-// Middleware is a function that accepts three parameters
-
-const requestLogger = (req, res, next) => {
-  console.log('Method: ', req.method);
-  console.log('Path: ', req.path);
-  console.log('Body: ', req.body);
-  console.log('---');
-  next();
-};
 
 // execute middleare for every requests
 app.use(requestLogger);
@@ -147,6 +134,4 @@ app.put('/api/persons/:id', (req, res) => {
   res.status(200).json(phonebookEntries);
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+module.exports = app; 

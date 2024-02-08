@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from 'react';
 
-import contacts from './services/contacts';
-import PersonForm from './components/PersonForm';
 import Filter from './components/Filter';
 import Persons from './components/Persons';
+import contacts from './services/contacts';
+import Form, { Input } from './components/Form';
+import Notification from './components/Notification';
 
 const App = () => {
   const [filter, setFilter] = useState('');
   const [number, setNumber] = useState('');
   const [newName, setNewName] = useState('');
-  const [message, setMessage] = useState('');
   const [persons, setPersons] = useState([]);
+  const [message, setMessage] = useState(null);
   const [statusColor, setStatusColor] = useState('');
-  const [fetchTrigger, setFetchTrigger] = useState(0);
 
   useEffect(() => {
     fetchContacts();
-  }, [fetchTrigger]);
+  }, []);
 
   const fetchContacts = () => {
     contacts.getContacts().then((contacts) => {
       setPersons(contacts);
-      console.log(contacts);
     });
   };
 
@@ -56,9 +55,8 @@ const App = () => {
       .then(async () => {
         // get the list of updated contacts
         const updatedContacts = await contacts.getContacts();
-        setFetchTrigger((prev) => prev + 1);
         setPersons(updatedContacts);
-        handleSetMessage(`${newContact.name} added to the phonebook`, 'green')
+        handleSetMessage(`${newContact.name} added to the phonebook`, 'green');
         return;
       })
       .catch((error) => {
@@ -120,7 +118,7 @@ const App = () => {
     setMessage(msg);
     setStatusColor(color);
     setTimeout(() => {
-      setMessage('');
+      setMessage(null);
     }, 5000);
   };
 
@@ -143,28 +141,32 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
 
-      {message !== '' && (
-        <div
-          id='message'
-          style={{
-            color: `${statusColor}`,
-            border: `3px solid ${statusColor}`,
-          }}>
-          {message}
-        </div>
-      )}
+      <Notification message={message} status={statusColor} />
 
       <Filter filter={filter} setFilter={setFilter} />
 
       <h3>add a new</h3>
 
-      <PersonForm
-        number={number}
-        newName={newName}
-        setNumber={setNumber}
-        setNewName={setNewName}
-        handleSubmit={handleSubmit}
-      />
+      <Form handleSubmit={handleSubmit}>
+        <Input
+          value={newName}
+          id='nameInput'
+          label={'name:'}
+          setValue={setNewName}
+          placeholder='enter name...'
+        />
+        <Input
+          value={number}
+          id='numberInput'
+          label='number:'
+          setValue={setNumber}
+          placeholder='enter number...'
+        />
+
+        <div>
+          <button type='submit'>add new contact</button>
+        </div>
+      </Form>
 
       <h3>Numbers</h3>
 

@@ -16,7 +16,7 @@ h2 {
 }
 
 h3 {
-  font-weight: 400;
+  font-weight: 4form form 00;
   color: brown;
   margin: 40px 0 10px 0;
 }
@@ -33,7 +33,7 @@ form {
   flex-direction: column;
 }
 
-input {
+form input {
   width: 200px;
   display: block;
   padding: 0.3rem;
@@ -42,17 +42,17 @@ input {
   border: 2px solid #222;
 }
 
-button {
+form button {
   width: 210px;
   padding: 0.3rem;
 }
 
-input:focus,
-button:focus {
+form input:focus,
+form button:focus {
   outline: 3px solid rgba(0, 0, 0, 0.4);
 }
 
-input::placeholder {
+form input::placeholder {
   color: #555;
 }
 
@@ -65,4 +65,32 @@ input::placeholder {
   border-radius: 10px;
   background-color: #e5e4e4;
   margin: 20px 0;
+}
+
+.contacts .contact {
+  width: 300px;
+  display: grid;
+  margin-bottom: 20px;
+}
+
+.contacts .contact div {
+  width: inherit;
+  display: flex;
+  justify-content: space-between;
+}
+
+.contacts .contact button {
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  border: 1px solid rgb(218, 24, 24);
+  padding: 4px 30px;
+  justify-self: end;
+  width: fit-content;
+  background-color: rgb(218, 24, 24);
+}
+.contacts .contact button:hover {
+  color: red;
+  border: 1px solid red;
+  background-color: white;
 }
