@@ -13,7 +13,7 @@ const connectDB = require('./config/db');
 
 mongoose.set('strictQuery', false);
 
-connectDB()
+connectDB();
 
 app.use(express.json());
 app.use(cors());

@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const PORT = process.env.PORT;
-const MONGO_URI = process.env.MONGO_URI;
+// eslint-disable-next-line no-undef
+const { PORT, MONGO_URI } = process.env;
 
 module.exports = { PORT, MONGO_URI };
