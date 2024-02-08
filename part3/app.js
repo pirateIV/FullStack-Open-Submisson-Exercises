@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const {requestLogger} = require('./utils/middleware/requestLogger');
+const { requestLogger } = require('./utils/middleware/requestLogger');
 
 const app = express();
 
@@ -18,10 +18,15 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 // execute middleare for every requests
 app.use(requestLogger);
 
+let phonebookEntries = [];
+
 // route used for unknown routes(endpoints)
 const unknownEndpoint = (req, res, next) => {
   res.status(400).send({ error: 'unknown endpoint' });
+  next();
 };
+
+app.use(unknownEndpoint);
 
 app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>');
@@ -134,4 +139,4 @@ app.put('/api/persons/:id', (req, res) => {
   res.status(200).json(phonebookEntries);
 });
 
-module.exports = app; 
+module.exports = app;

@@ -1,5 +1,5 @@
 const contactRouter = require('express').Router();
-const Person = require('./models/persons')
+const Person = require('../models/persons');
 
 contactRouter.get('/info', async (req, res) => {
   const count = await Person.countDocuments();
