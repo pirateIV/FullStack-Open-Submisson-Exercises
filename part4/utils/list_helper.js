@@ -41,6 +41,20 @@ const mostBlogs = (blogs) => {
 
   return modifiedBlogs[maxLikesIndex];
 };
+
+const mostLikes = (blogs) => {
+  const maxLikesIndex = _.indexOf(_.map(blogs, 'likes'), _.max(_.map(blogs, 'likes')));
+
+  const includeOnlyParts = (blogs) => {
+    return _.map(blogs, ({ author, likes }) => {
+      return { author, likes };
+    });
+  };
+
+  const modifiedBlogs = includeOnlyParts(blogs);
+
+  return modifiedBlogs[maxLikesIndex];
+};
 const blogs = [
   {
     _id: '5a422a851b54a676234d17f7',
@@ -99,5 +113,5 @@ const blogs = [
 ];
 
 // mostBlogs(blogs);
-console.log(mostBlogs(blogs));
-module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs };
+console.log(mostLikes(blogs));
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes };
