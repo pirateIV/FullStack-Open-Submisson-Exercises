@@ -127,7 +127,7 @@ const App = () => {
       alert('Please both fields are required');
     } else if (!name) {
       alert('The contact name field is required');
-    } else if (!number) {
+    } else if (!number) { 
       alert('The contact number field is required');
     }
   };
